@@ -1,0 +1,171 @@
+.dashboard-overview,
+.activity-panel {
+  margin-top: 18px;
+}
+
+.dashboard-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.dashboard-section-heading h2 {
+  margin: 4px 0 0;
+  color: #30314d;
+  font: 700 14px Manrope, sans-serif;
+}
+
+.dashboard-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.dashboard-stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #eaebf2;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.dashboard-stat-icon {
+  display: grid;
+  width: 33px;
+  height: 33px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 9px;
+  background: #f0edff;
+  color: #735ad8;
+}
+
+.dashboard-stat > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.dashboard-stat strong {
+  color: #30314d;
+  font: 700 18px Manrope, sans-serif;
+}
+
+.dashboard-stat > div > span {
+  overflow: hidden;
+  color: #85889b;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activity-panel .panel-heading {
+  margin-bottom: 8px;
+}
+
+.activity-panel .panel-heading h2 {
+  font-size: 14px;
+}
+
+.activity-heading-icon {
+  color: #85889b;
+}
+
+.activity-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  padding: 12px 0;
+  border-top: 1px solid #f0f0f4;
+}
+
+.activity-item-icon {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 8px;
+  background: #f5f4fb;
+  color: #7765c8;
+}
+
+.activity-item-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.activity-item-copy strong {
+  color: #55576d;
+  font-size: 10px;
+}
+
+.activity-item-copy button {
+  overflow: hidden;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #898b9e;
+  font-size: 9px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.activity-item-copy button:hover {
+  color: #6c54d0;
+}
+
+.activity-item time {
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: #999bac;
+  font-size: 9px;
+}
+
+.activity-empty {
+  margin: 0;
+  padding: 13px 0 2px;
+  border-top: 1px solid #f0f0f4;
+  color: #85889b;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+@media (max-width: 1100px) {
+  .dashboard-stat-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .dashboard-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-stat {
+    padding: 11px;
+  }
+
+  .activity-item {
+    gap: 8px;
+  }
+}

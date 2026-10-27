@@ -1,0 +1,17 @@
+.brand {
+  position: relative;
+  justify-content: center;
+  padding: 1px 5px 25px;
+}
+
+.brand-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.brand .mobile-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+}

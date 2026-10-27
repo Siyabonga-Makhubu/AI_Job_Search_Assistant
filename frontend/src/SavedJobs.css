@@ -1,0 +1,496 @@
+.saved-job {
+  align-items: stretch;
+}
+
+.saved-job-main {
+  width: 100%;
+  min-width: 0;
+}
+
+.saved-job-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.saved-job-heading h2 {
+  overflow-wrap: anywhere;
+}
+
+.application-status {
+  flex-shrink: 0;
+  border: 1px solid #c9e5d8;
+  border-radius: 5px;
+  background: #edf7f1;
+  color: #286b4f;
+  padding: 6px 9px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.tracking-dates {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+  padding: 12px 0;
+  border-top: 1px solid #ececf2;
+  border-bottom: 1px solid #ececf2;
+}
+
+.tracking-dates > div,
+.tracking-dates > label {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.tracking-dates small,
+.tracking-controls label {
+  color: #85879a;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.tracking-dates strong {
+  color: #45475d;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.tracking-dates input,
+.tracking-controls select {
+  width: 100%;
+  min-width: 0;
+  height: 34px;
+  border: 1px solid #e5e6ec;
+  border-radius: 6px;
+  background: #fff;
+  padding: 0 8px;
+  color: #45475d;
+  font: inherit;
+  font-size: 10px;
+}
+
+.tracking-dates .text-button {
+  justify-self: start;
+  padding: 0;
+}
+
+.tracking-availability {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 0 0 14px;
+  color: #85879a;
+  font-size: 9px;
+}
+
+.tracking-availability strong {
+  display: block;
+  margin-top: 4px;
+  color: #56586c;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.tracking-controls {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tracking-controls label {
+  display: grid;
+  gap: 5px;
+  width: min(190px, 100%);
+}
+
+.tracking-controls .button,
+.saved-job-actions .button {
+  min-height: 34px;
+  padding: 0 10px;
+  font-size: 9px;
+}
+
+.saved-job-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.saved-job-actions .text-button {
+  margin-left: auto;
+}
+
+@media (max-width: 760px) {
+  .tracking-dates {
+    grid-template-columns: 1fr;
+  }
+
+  .tracking-dates > div,
+  .tracking-dates > label {
+    grid-template-columns: minmax(95px, 0.45fr) minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .tracking-dates .text-button {
+    grid-column: 2;
+  }
+
+  .saved-job-actions .text-button {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .saved-job-heading {
+    flex-direction: column;
+  }
+
+  .tracking-controls label {
+    width: 100%;
+  }
+
+  .tracking-controls > .button {
+    flex: 1;
+  }
+
+  .saved-job-actions > * {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .saved-job-actions .text-button {
+    flex: 0 0 100%;
+  }
+}
+
+.cv-card-error {
+  flex: 0 0 100%;
+  color: #a84242;
+  font-size: 9px;
+}
+
+.tailored-cv-backdrop {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 20px;
+  background: #17182780;
+}
+
+.tailored-cv-modal {
+  display: flex;
+  flex-direction: column;
+  width: min(760px, 100%);
+  max-height: min(900px, 92vh);
+  overflow: hidden;
+  border: 1px solid #e5e6ec;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 24px 70px #11121f40;
+}
+
+.tailored-cv-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px 22px;
+  border-bottom: 1px solid #ececf2;
+}
+
+.tailored-cv-header h2 {
+  margin: 5px 0;
+  color: #30314a;
+  font: 700 17px Manrope, sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.tailored-cv-header p {
+  margin: 0;
+  color: #85879a;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.tailored-cv-modal form {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.tailored-cv-content {
+  overflow-y: auto;
+  padding: 2px 22px 16px;
+}
+
+.cv-edit-section,
+.cv-read-section {
+  padding: 16px 0;
+  border-bottom: 1px solid #ececf2;
+}
+
+.cv-edit-section h3,
+.cv-read-section h3 {
+  margin: 0 0 10px;
+  color: #45475d;
+  font: 700 12px Manrope, sans-serif;
+}
+
+.cv-personal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
+}
+
+.cv-personal-grid label {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  color: #77798c;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.cv-personal-grid input,
+.cv-edit-section textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #e4e5ec;
+  border-radius: 6px;
+  background: #fff;
+  padding: 9px 10px;
+  color: #45475d;
+  font: 11px/1.55 inherit;
+}
+
+.cv-edit-section textarea {
+  min-height: 105px;
+  resize: vertical;
+}
+
+.cv-personal-grid input:focus,
+.cv-edit-section textarea:focus {
+  outline: 0;
+  border-color: #91bca8;
+  box-shadow: 0 0 0 3px #31936b14;
+}
+
+.cv-edit-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cv-edit-heading h3 {
+  margin-bottom: 10px;
+}
+
+.cv-edit-heading .text-button {
+  flex-shrink: 0;
+  padding: 2px 0 8px;
+}
+
+.cv-edit-entry {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px 0 0 12px;
+  border-top: 1px solid #ececf2;
+  border-left: 2px solid #c9e5d8;
+}
+
+.cv-entry-title-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 34px;
+  align-items: end;
+  gap: 8px;
+}
+
+.cv-entry-title-row label,
+.cv-edit-entry > label {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  color: #77798c;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.cv-edit-entry input,
+.cv-edit-entry textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #e4e5ec;
+  border-radius: 6px;
+  background: #fff;
+  padding: 9px 10px;
+  color: #45475d;
+  font: inherit;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.cv-edit-entry textarea {
+  min-height: 76px;
+  resize: vertical;
+}
+
+.cv-edit-entry input:focus,
+.cv-edit-entry textarea:focus {
+  outline: 0;
+  border-color: #91bca8;
+  box-shadow: 0 0 0 3px #31936b14;
+}
+
+.cv-read-section > p {
+  margin: 0;
+  color: #65677a;
+  font-size: 10px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.cv-read-section .bullet-list {
+  margin: 0;
+}
+
+.cv-read-section .chips {
+  margin: 0;
+}
+
+.tailored-cv-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 22px;
+  border-top: 1px solid #ececf2;
+  background: #fff;
+}
+
+.tailored-cv-footer > span {
+  font-size: 10px;
+}
+
+.cv-save-error {
+  color: #a84242;
+}
+
+.cv-save-success {
+  color: #286b4f;
+}
+
+@media (max-width: 560px) {
+  .tailored-cv-backdrop {
+    align-items: end;
+    padding: 0;
+  }
+
+  .tailored-cv-modal {
+    width: 100%;
+    max-height: 94vh;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .tailored-cv-header,
+  .tailored-cv-content,
+  .tailored-cv-footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .cv-personal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tailored-cv-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+.job-card-actions {
+  flex-wrap: wrap;
+  column-gap: 10px;
+  row-gap: 8px;
+}
+
+.job-card-actions > * {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+}
+
+.job-card-actions .button {
+  justify-content: center;
+}
+
+.job-card-actions .text-button {
+  flex: 0 1 auto;
+  text-align: left;
+}
+
+@media (max-width: 420px) {
+  .job-card-actions {
+    align-items: flex-start;
+  }
+}
+
+.cv-identity {
+  padding: 16px 0;
+  border-bottom: 1px solid #ececf2;
+}
+
+.cv-identity h2 {
+  margin: 0 0 4px;
+  color: #30314a;
+  font: 700 22px/1.25 Manrope, sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.cv-identity > strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #55576d;
+  font: 600 13px Manrope, sans-serif;
+}
+
+.cv-identity > p {
+  margin: 0;
+  color: #77798c;
+  font-size: 10px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.cv-skill-group + .cv-skill-group,
+.cv-entry + .cv-entry {
+  margin-top: 12px;
+}
+
+.cv-skill-group h4,
+.cv-entry h4 {
+  margin: 0 0 5px;
+  color: #55576d;
+  font: 700 10px Manrope, sans-serif;
+}
+
+.cv-skill-group > p {
+  margin: 0;
+  color: #65677a;
+  font-size: 10px;
+  line-height: 1.7;
+}

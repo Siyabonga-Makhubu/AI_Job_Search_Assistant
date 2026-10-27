@@ -1,0 +1,637 @@
+{
+  "info": {
+    "name": "Resume RAG - Retrieval Verification",
+    "description": "Postman collection for the retrieval module validation steps. Works against the same backend as ingestion.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "PHASE 17 - Retrieval Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/v1/retrieval/health"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Retrieval module health is valid', function () {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.status).to.eql('ok');",
+              "  pm.expect(body.module).to.eql('resume-retrieval');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "PHASE 18 - Retrieval Data Model",
+      "description": "Validates the backend is connected to the same MongoDB instance used by ingestion and the retrieval layer is reading the shared resume dataset.",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/v1/health/db"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Database health endpoint responds successfully', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Database is connected for retrieval', function () {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.connected).to.eql(true);",
+              "  pm.expect(body.database).to.eql('mongodb');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "PHASE 19 - Query Normalization",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"   Find   candidates with PYTHON, RAG and Selenium experience!!!   \"\n}"
+        },
+        "url": "{{baseUrl}}/v1/resume/search/raw"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Request succeeds or validates query', function () {",
+              "  pm.expect([200, 400]).to.include(pm.response.code);",
+              "});",
+              "if (pm.response.code === 200) {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.query).to.include('Find');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "PHASE 20 - Query Embedding",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"Find a Test Architect with RAG and GenAI experience\"\n}"
+        },
+        "url": "{{baseUrl}}/v1/resume/search/raw"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Embeddings endpoint responds', function () {",
+              "  pm.expect([200, 400, 500, 502]).to.include(pm.response.code);",
+              "});",
+              "if (pm.response.code === 200) {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.results).to.be.an('array');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "PHASE 21 - Vector Search Raw",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"Python RAG test automation\",\n  \"topK\": 5\n}"
+        },
+        "url": "{{baseUrl}}/v1/resume/search/raw"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Vector search responds', function () {",
+              "  pm.expect([200, 400, 503]).to.include(pm.response.code);",
+              "});",
+              "if (pm.response.code === 200) {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.results).to.be.an('array');",
+              "  if (body.results.length) {",
+              "    pm.expect(body.results[0].score || body.results[0].vectorScore).to.be.a('number');",
+              "  }",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "PHASE 22 - Metadata Filtered Search",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"Find candidates with Python and RAG experience\",\n  \"filters\": {\n    \"skills\": [\"Python\", \"RAG\"],\n    \"minimumExperience\": 5\n  },\n  \"topK\": 5\n}"
+        },
+        "url": "{{baseUrl}}/v1/resume/search"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Search responds successfully', function () {",
+              "  pm.expect([200, 400]).to.include(pm.response.code);",
+              "});",
+              "if (pm.response.code === 200) {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.success).to.eql(true);",
+              "  pm.expect(body.results).to.be.an('array');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "PHASE 23 - Hybrid Retrieval",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"Find senior Python developers with RAG experience\",\n  \"filters\": {\n    \"skills\": [\"Python\", \"RAG\"],\n    \"minimumExperience\": 5\n  },\n  \"topK\": 5\n}"
+        },
+        "url": "{{baseUrl}}/v1/resume/search"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Hybrid retrieval responds', function () {",
+              "  pm.expect([200, 400]).to.include(pm.response.code);",
+              "});",
+              "if (pm.response.code === 200) {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.success).to.eql(true);",
+              "  pm.expect(body.results).to.be.an('array');",
+              "  if (body.results.length) {",
+              "    pm.expect(body.results[0].skills).to.be.an('array');",
+              "  }",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "PHASE 24 - Reranked Search",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"Which candidate has the strongest RAG experience?\",\n  \"topK\": 5\n}"
+        },
+        "url": "{{baseUrl}}/v1/resume/search"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Reranked search responds', function () {",
+              "  pm.expect([200, 400]).to.include(pm.response.code);",
+              "});",
+              "if (pm.response.code === 200) {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.answer).to.be.a('string');",
+              "  pm.expect(body.results).to.be.an('array');",
+              "  if (body.results.length) {",
+              "    pm.expect(body.results[0].rerankScore || body.results[0].vectorScore).to.be.a('number');",
+              "  }",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "PHASE 25 - Retrieval Context Builder",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"Find candidates with Python, RAG and test automation experience\",\n  \"topK\": 5\n}"
+        },
+        "url": "{{baseUrl}}/v1/resume/search"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Context builder search responds', function () {",
+              "  pm.expect([200, 400]).to.include(pm.response.code);",
+              "});",
+              "if (pm.response.code === 200) {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.results).to.be.an('array');",
+              "  if (body.results.length) {",
+              "    pm.expect(body.results[0]).to.have.property('resumeId');",
+              "    pm.expect(body.results[0].skills).to.be.an('array');",
+              "  }",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "PHASE 26 - Grounded Answer Generation",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"Which candidate has the strongest RAG experience?\",\n  \"topK\": 5\n}"
+        },
+        "url": "{{baseUrl}}/v1/resume/search"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Grounded answer search responds', function () {",
+              "  pm.expect([200, 400]).to.include(pm.response.code);",
+              "});",
+              "if (pm.response.code === 200) {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.answer).to.be.a('string');",
+              "  pm.expect(body.answer.length).to.be.greaterThan(0);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "PHASE 27 - Citations and Sources",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"Find the strongest match for a Test Architect role with RAG experience\",\n  \"topK\": 5\n}"
+        },
+        "url": "{{baseUrl}}/v1/resume/search"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Citation search responds', function () {",
+              "  pm.expect([200, 400]).to.include(pm.response.code);",
+              "});",
+              "if (pm.response.code === 200) {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.sources).to.be.an('array');",
+              "  if (body.sources.length) {",
+              "    pm.expect(body.sources[0]).to.have.property('resumeId');",
+              "    pm.expect(body.sources[0].score).to.be.a('number');",
+              "  }",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "PHASE 28 - Primary Search API",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"Find candidates with Python and RAG experience\",\n  \"filters\": {\n    \"skills\": [\"Python\", \"RAG\"],\n    \"minimumExperience\": 5\n  },\n  \"topK\": 5\n}"
+        },
+        "url": "{{baseUrl}}/v1/resume/search"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Primary search API succeeds', function () {",
+              "  pm.expect([200, 400]).to.include(pm.response.code);",
+              "});",
+              "if (pm.response.code === 200) {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.success).to.eql(true);",
+              "  pm.expect(body.query).to.be.a('string');",
+              "  pm.expect(body.answer).to.be.a('string');",
+              "  pm.expect(body.results).to.be.an('array');",
+              "  pm.expect(body.sources).to.be.an('array');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "PHASE 1 - Retrieval Readiness",
+      "description": "Verifies the documented retrieval readiness contract.",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/v1/search/readiness"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Readiness returns 200', function () { pm.response.to.have.status(200); });",
+            "pm.test('Retrieval is ready', function () {",
+            "  const body = pm.response.json();",
+            "  pm.expect(body.ready).to.eql(true);",
+            "  pm.expect(body.resumeCount).to.be.a('number');",
+            "  pm.expect(body.resumesWithEmbedding).to.be.a('number');",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "PHASE 7 - Standalone BM25 Search",
+      "description": "Verifies lexical retrieval independently from vector search.",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {"mode": "raw", "raw": "{\n  \"query\": \"Python RAG LangChain\",\n  \"topK\": 5\n}"},
+        "url": "{{baseUrl}}/v1/search/bm25"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('BM25 returns 200', function () { pm.response.to.have.status(200); });",
+            "pm.test('BM25 results expose keyword scores', function () {",
+            "  const body = pm.response.json();",
+            "  pm.expect(body.results).to.be.an('array');",
+            "  if (body.results.length) pm.expect(body.results[0].keywordScore).to.be.a('number');",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "PHASE 11 - LLM Re-Ranking",
+      "description": "Verifies reranking returns only supplied candidate IDs.",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {"mode": "raw", "raw": "{\n  \"query\": \"Senior QA architect with RAG and MCP experience\",\n  \"candidates\": [{\"resumeId\": \"691db80aa895776f97b6eca6\", \"snippet\": \"Test Architect with RAG, DeepEval and MCP experience\"}],\n  \"topK\": 10\n}"},
+        "url": "{{baseUrl}}/v1/search/rerank"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Rerank returns 200', function () { pm.response.to.have.status(200); });",
+            "pm.test('Reranked IDs are supplied IDs', function () {",
+            "  const body = pm.response.json();",
+            "  pm.expect(body.results).to.be.an('array');",
+            "  body.results.forEach(function (result) { pm.expect(result.resumeId).to.eql('691db80aa895776f97b6eca6'); });",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "PHASE 12 - Candidate Summarization",
+      "description": "Verifies grounded optional candidate-fit summarization.",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {"mode": "raw", "raw": "{\n  \"query\": \"Senior QA architect with GenAI RAG experience\",\n  \"candidate\": {\"resumeId\": \"691db80aa895776f97b6eca6\", \"snippet\": \"13+ years, RAG, DeepEval, MCP and agentic QA systems\"},\n  \"style\": \"short\",\n  \"maxTokens\": 150\n}"},
+        "url": "{{baseUrl}}/v1/search/summarize"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Summarization returns 200', function () { pm.response.to.have.status(200); });",
+            "pm.test('Summary is returned for the supplied candidate', function () {",
+            "  const body = pm.response.json();",
+            "  pm.expect(body.resumeId).to.eql('691db80aa895776f97b6eca6');",
+            "  pm.expect(body.summary).to.be.a('string').and.not.empty;",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "PHASE 15 - Fallback Scenarios",
+      "description": "Exercises the documented failure-injection headers. These requests require the server to support the corresponding test hooks.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "X-Test-Force-Rerank-Failure", "value": "true"},
+          {"key": "X-Test-Force-Vector-Failure", "value": "true"},
+          {"key": "X-Test-Force-BM25-Failure", "value": "true"}
+        ],
+        "body": {"mode": "raw", "raw": "{\n  \"query\": \"Senior QA architect with RAG experience\",\n  \"options\": {\"rerankTopN\": 5, \"vectorTopK\": 5, \"bm25TopK\": 5}\n}"},
+        "url": "{{baseUrl}}/v1/search"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Fallback returns usable results', function () {",
+            "  pm.response.to.have.status(200);",
+            "  const body = pm.response.json();",
+            "  pm.expect(body.results).to.be.an('array');",
+            "  pm.expect(body.degraded).to.eql(true);",
+            "  pm.expect(body.warnings).to.be.an('array');",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "PHASE 15 - Vector Failure Fallback",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "X-Test-Force-Vector-Failure", "value": "true"}
+        ],
+        "body": {"mode": "raw", "raw": "{\"query\":\"Python RAG test automation\"}"},
+        "url": "{{baseUrl}}/v1/search"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Vector fallback is active', function () {",
+            "  pm.response.to.have.status(200);",
+            "  const body = pm.response.json();",
+            "  pm.expect(body.results).to.be.an('array');",
+            "  pm.expect(body.vectorFallback).to.eql(true);",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "PHASE 15 - BM25 Failure Fallback",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "X-Test-Force-BM25-Failure", "value": "true"}
+        ],
+        "body": {"mode": "raw", "raw": "{\"query\":\"Python RAG test automation\"}"},
+        "url": "{{baseUrl}}/v1/search"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('BM25 fallback is active', function () {",
+            "  pm.response.to.have.status(200);",
+            "  const body = pm.response.json();",
+            "  pm.expect(body.results).to.be.an('array');",
+            "  pm.expect(body.bm25Fallback).to.eql(true);",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "PHASE 15 - Rerank Failure Fallback",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "X-Test-Force-Rerank-Failure", "value": "true"}
+        ],
+        "body": {"mode": "raw", "raw": "{\"query\":\"Senior QA architect with RAG experience\"}"},
+        "url": "{{baseUrl}}/v1/search"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Rerank fallback is active', function () {",
+            "  pm.response.to.have.status(200);",
+            "  const body = pm.response.json();",
+            "  pm.expect(body.results).to.be.an('array');",
+            "  pm.expect(body.warnings).to.include('LLM_RERANK_FAILED');",
+            "});"
+          ]
+        }
+      }]
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "mappings": {
+    "dynamic": false,
+    "fields": {
+      "searchText": {
+        "type": "string",
+        "analyzer": "lucene.standard",
+        "searchAnalyzer": "lucene.standard",
+        "similarity": {
+          "type": "BM25"
+        }
+      },
+      "name": {
+        "type": "string",
+        "analyzer": "lucene.standard"
+      },
+      "role": {
+        "type": "string",
+        "analyzer": "lucene.standard"
+      },
+      "company": {
+        "type": "string",
+        "analyzer": "lucene.standard"
+      },
+      "location": {
+        "type": "string",
+        "analyzer": "lucene.standard"
+      },
+      "education": {
+        "type": "string",
+        "analyzer": "lucene.standard"
+      },
+      "experienceSummary": {
+        "type": "string",
+        "analyzer": "lucene.standard"
+      },
+      "skills": {
+        "type": "string",
+        "analyzer": "lucene.standard"
+      },
+      "jobTitles": {
+        "type": "string",
+        "analyzer": "lucene.standard"
+      },
+      "rawText": {
+        "type": "string",
+        "analyzer": "lucene.standard"
+      }
+    }
+  }
+}
